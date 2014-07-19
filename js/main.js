@@ -19,7 +19,10 @@ require(['jquery', 'digit', 'color'], function($, DIGIT, COLOR) {
     };
 
     var colors = [],
-        balls = [];
+        balls = [],
+        lastCountdown,
+        countdown,
+        lastSecond;
 
     for(var i in COLOR) {
         if(COLOR.hasOwnProperty(i)) {
@@ -27,36 +30,40 @@ require(['jquery', 'digit', 'color'], function($, DIGIT, COLOR) {
         }
     }
 
-    var lastCountdown;
+    $('#start').click(function() {
+        var hours = parseInt($('#hours').val())  || 0,
+            minutes = parseInt($('#minutes').val())  || 0,
+            seconds = parseInt($('#seconds').val())  || 0;
+
+        countdown =  hours*3600 + minutes*60 + seconds;
+
+        startTicker();
+        $('#start').prop('disabled', true);
+    });
+
+    $('#reset').click(function() {
+        location.reload(true);
+    });
 
     renderTime();
 
-    var countdown = 1314;
-
-    startTicker(countdown);
-
-    function startTicker(countdown) {
-        var ticker = setInterval(function() {
-            if(countdown) {
-                countdown--;
-            } else {
-                clearInterval(ticker);
-            }
-        }, 1000);
-
+    function startTicker() {
         var ballTicker = setInterval(function() {
             ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-            renderTime(countdown);
+            renderTime();
             updateBalls();
             rendBalls();
-            if(!countdown) {
+            if(!countdown && !balls.length) {
                 clearInterval(ballTicker);
             }
         }, 50);
     }
 
-    function renderTime(countdown) {
+    function renderTime() {
         if(!countdown) countdown = 0;
+
+        var second = (new Date).getSeconds();
+        if(second !== lastSecond && lastCountdown) countdown--;
 
         var time = parseTime(countdown),
             lastTime = parseTime(lastCountdown);
@@ -105,6 +112,7 @@ require(['jquery', 'digit', 'color'], function($, DIGIT, COLOR) {
         }
 
         lastCountdown = countdown;
+        lastSecond = second;
     }
 
     function addBall(param) {
@@ -161,6 +169,7 @@ require(['jquery', 'digit', 'color'], function($, DIGIT, COLOR) {
     }
 
     function parseTime(countdown) {
+        if(countdown < 0) countdown = 0;
         var h = Math.floor(countdown/3600),
             m = Math.floor((countdown-3600*h)/60),
             s = Math.floor(countdown%60);

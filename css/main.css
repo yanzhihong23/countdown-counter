@@ -1,5 +1,62 @@
+body {
+    color: #1cc5a9;
+}
+
 #canvas {
 	display: block;
 	margin: 30px auto;
 	border: solid 1px #1cc5a9;
+}
+
+h1 {
+    text-align: center;
+    font-family: Arial;
+}
+
+#set {
+    text-align: center;
+}
+
+#set input {
+    width: 80px;
+    height: 36px;
+    padding: 0 10px;
+    border: solid 1px #1cc5a9;
+    text-align: right;
+    font-size: 16px;
+    color: #1cc5a9;
+}
+
+#set input[type=text]:focus,
+#set input[type=text]:active {
+    border: solid 1px #f7636e;
+    outline: 0;
+}
+
+#set .des {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+#set input[type=button] {
+    width: 100px;
+    height: 38px;
+    background: #1cc5a9;
+    color: white;
+    text-align: center;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+#set input[type=button]:active {
+    border: 0;
+    outline: 0;
+    background: #f7636e;
+}
+
+#set input[type=button]:disabled {
+    border: 0;
+    outline: 0;
+    background: #d5d4b1;
+    cursor: not-allowed;
 }
