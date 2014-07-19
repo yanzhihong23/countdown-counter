@@ -1,6 +1,13 @@
-(function(){
-	var canvas = document.getElementById('canvas');
-	var ctx = canvas.getContext('2d');
+require.config({
+    baseUrl: 'js',
+    paths: {
+        jquery: 'jquery-2.1.1.min'
+    }
+});
+
+require(['jquery', 'digit', 'color'], function($, DIGIT, COLOR) {
+    var canvas = document.getElementById('canvas');
+    var ctx = canvas.getContext('2d');
 
     var options = {
         x: 0,
@@ -48,7 +55,7 @@
         var block = 2*(options.radius + options.space);
         var digArr = [h1, h2, 10, m1, m2, 10, s1, s2];
         var xArr = [
-                x,
+            x,
                 x+8*block,
                 x+16*block,
                 x+21*block,
@@ -56,7 +63,7 @@
                 x+37*block,
                 x+42*block,
                 x+50*block
-            ];
+        ];
         for(var i= 0, len=digArr.length; i<len; i++) {
             renderDigit({x:xArr[i], y:y, digit:digArr[i]});
         }
@@ -81,4 +88,4 @@
             }
         }
     }
-})();
+});

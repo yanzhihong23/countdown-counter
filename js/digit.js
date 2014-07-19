@@ -1,5 +1,5 @@
-const DIGIT =
-    [
+define(function() {
+    return [
         [
             [0,0,1,1,1,0,0],
             [0,1,1,0,1,1,0],
@@ -133,3 +133,4 @@ const DIGIT =
             [0,0,0,0]
         ]//:
     ];
+});
