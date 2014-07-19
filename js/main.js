@@ -18,6 +18,17 @@ require(['jquery', 'digit', 'color'], function($, DIGIT, COLOR) {
         color: COLOR.BEWITCHED_TREE
     };
 
+    var colors = [],
+        balls = [];
+
+    for(var i in COLOR) {
+        if(COLOR.hasOwnProperty(i)) {
+            colors.push(COLOR[i]);
+        }
+    }
+
+    var lastCountdown;
+
     renderTime();
 
     var countdown = 1314;
@@ -26,36 +37,35 @@ require(['jquery', 'digit', 'color'], function($, DIGIT, COLOR) {
 
     function startTicker(countdown) {
         var ticker = setInterval(function() {
-            if(countdown<10) {
-                options.color = COLOR.MERRY_CRANES_BILL;
-            }
-            var h = Math.floor(countdown/3600),
-                m = Math.floor((countdown-3600*h)/60),
-                s = Math.floor(countdown%60);
-            ctx.clearRect(0, 0, 1024, 768);
-            renderTime({h:h,m:m,s:s});
             if(countdown) {
                 countdown--;
             } else {
                 clearInterval(ticker);
             }
         }, 1000);
+
+        var ballTicker = setInterval(function() {
+            ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+            renderTime(countdown);
+            updateBalls();
+            rendBalls();
+            if(!countdown) {
+                clearInterval(ballTicker);
+            }
+        }, 50);
     }
 
-    function renderTime(time) {
-        if(typeof time !== 'object') time = {h:0, m:0, s:0};
+    function renderTime(countdown) {
+        if(!countdown) countdown = 0;
 
-        var h1 = Math.floor(time.h/10),
-            h2 = time.h%10,
-            m1 = Math.floor(time.m/10),
-            m2 = time.m%10,
-            s1 = Math.floor(time.s/10),
-            s2 = time.s%10;
+        var time = parseTime(countdown),
+            lastTime = parseTime(lastCountdown);
+
         var x = 50, y = 50;
         var block = 2*(options.radius + options.space);
-        var digArr = [h1, h2, 10, m1, m2, 10, s1, s2];
+        var digArr = [time.h1, time.h2, 10, time.m1, time.m2, 10, time.s1, time.s2];
         var xArr = [
-            x,
+                x,
                 x+8*block,
                 x+16*block,
                 x+21*block,
@@ -68,6 +78,101 @@ require(['jquery', 'digit', 'color'], function($, DIGIT, COLOR) {
             renderDigit({x:xArr[i], y:y, digit:digArr[i]});
         }
 
+        if(lastCountdown) {
+            if(lastTime.h1 !== time.h1) {
+                addBall({x:xArr[0], y:y, digit:time.h1});
+            }
+
+            if(lastTime.h2 !== time.h2) {
+                addBall({x:xArr[1], y:y, digit:time.h2});
+            }
+
+            if(lastTime.m1 !== time.m1) {
+                addBall({x:xArr[3], y:y, digit:time.m1});
+            }
+
+            if(lastTime.m2 !== time.m2) {
+                addBall({x:xArr[4], y:y, digit:time.m2});
+            }
+
+            if(lastTime.s1 !== time.s1) {
+                addBall({x:xArr[6], y:y, digit:time.s1});
+            }
+
+            if(lastTime.s2 !== time.s2) {
+                addBall({x:xArr[7], y:y, digit:time.s2});
+            }
+        }
+
+        lastCountdown = countdown;
+    }
+
+    function addBall(param) {
+        var digArr = DIGIT[param.digit];
+        for(var i= 0, len=digArr.length; i<len; i++) {
+            for (var j = 0, _len = digArr[i].length; j < _len; j++) {
+                if (digArr[i][j]) {
+                    var ball = {
+                        cx: param.x + (2*j + 1)*(options.radius + options.space),
+                        cy: param.y + (2*i + 1)*(options.radius + options.space),
+                        g: 1.5+Math.random(),
+                        vx: Math.pow(-1, Math.ceil(Math.random()*1000))*4,
+                        vy: -10,
+                        color: colors[Math.floor(Math.random()*colors.length)]
+                    };
+
+                    balls.push(ball);
+                }
+            }
+        }
+    }
+
+    function rendBalls() {
+        for(var i= 0, len=balls.length; i<len; i++) {
+            var ball = balls[i];
+            ctx.beginPath();
+            ctx.fillStyle = ball.color;
+            ctx.arc(ball.cx, ball.cy, options.radius, 0, 2*Math.PI);
+            ctx.fill();
+        }
+    }
+
+    function updateBalls() {
+        var i = 0, ball, len = balls.length, count = 0;
+        for(; i<len; i++) {
+            ball = balls[i];
+            ball.cx += ball.vx;
+            ball.cy += ball.vy;
+            ball.vy += ball.g;
+
+            if(ball.cy >= ctx.canvas.height - options.radius) {
+                ball.cy = ctx.canvas.height - options.radius;
+                ball.vy = -ball.vy*.75;
+            }
+
+            // balls in the view
+            if(ball.cx+options.radius>0 && ball.cx-options.radius<ctx.canvas.width) {
+                balls[count++] = ball;
+            }
+        }
+
+        // delete balls out the view
+        balls.splice(count, balls.length-count);
+    }
+
+    function parseTime(countdown) {
+        var h = Math.floor(countdown/3600),
+            m = Math.floor((countdown-3600*h)/60),
+            s = Math.floor(countdown%60);
+
+        return {
+            h1: Math.floor(h/10),
+            h2: h%10,
+            m1: Math.floor(m/10),
+            m2: m%10,
+            s1: Math.floor(s/10),
+            s2: s%10
+        }
     }
 
     function renderDigit(_options) {
