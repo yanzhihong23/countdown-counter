@@ -11,10 +11,12 @@ body {
 h1 {
     text-align: center;
     font-family: Arial;
+    min-width: 1024px;
 }
 
 #set {
     text-align: center;
+    min-width: 1024px;
 }
 
 #set input {
@@ -33,7 +35,7 @@ h1 {
     outline: 0;
 }
 
-#set .des {
+#set span {
     font-size: 24px;
     font-weight: bold;
 }

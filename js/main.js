@@ -22,7 +22,8 @@ require(['jquery', 'digit', 'color'], function($, DIGIT, COLOR) {
         balls = [],
         lastCountdown,
         countdown,
-        lastSecond;
+        lastSecond,
+        ticker;
 
     for(var i in COLOR) {
         if(COLOR.hasOwnProperty(i)) {
@@ -35,26 +36,36 @@ require(['jquery', 'digit', 'color'], function($, DIGIT, COLOR) {
             minutes = parseInt($('#minutes').val())  || 0,
             seconds = parseInt($('#seconds').val())  || 0;
 
+        balls = [];
         countdown =  hours*3600 + minutes*60 + seconds;
 
-        startTicker();
-        $('#start').prop('disabled', true);
+        if(typeof ticker !== 'undefined') clearInterval(ticker);
+        initTicker();
     });
 
     $('#reset').click(function() {
-        location.reload(true);
+        $('#hours').val('');
+        $('#minutes').val('');
+        $('#seconds').val('');
+
+        clearInterval(ticker);
+        countdown = 0;
+        balls = [];
+        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+        renderTime();
+//        location.reload(true);
     });
 
     renderTime();
 
-    function startTicker() {
-        var ballTicker = setInterval(function() {
+    function initTicker() {
+        ticker = setInterval(function() {
             ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
             renderTime();
             updateBalls();
             rendBalls();
             if(!countdown && !balls.length) {
-                clearInterval(ballTicker);
+                clearInterval(ticker);
             }
         }, 50);
     }
