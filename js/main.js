@@ -28,6 +28,7 @@ require(['jquery', 'digit', 'color'], function($, DIGIT, COLOR) {
     (function(){
         initColors();
         renderCounter();
+        renderDesc();
         bindEvent();
     })();
 
@@ -48,6 +49,7 @@ require(['jquery', 'digit', 'color'], function($, DIGIT, COLOR) {
             balls = [];
             ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
             renderCounter();
+            renderDesc();
         });
 
         $('input[type=text]').on('input', function() {
@@ -217,5 +219,17 @@ require(['jquery', 'digit', 'color'], function($, DIGIT, COLOR) {
                 }
             }
         }
+    }
+
+    function renderDesc() {
+        ctx.beginPath();
+        ctx.textBaseline = 'middle';
+        ctx.textAlign = 'center';
+        ctx.font = '50px cursive';
+        ctx.fillStyle = COLOR.BEWITCHED_TREE;
+        ctx.fillText('Can\'t wait to see the falling balls...', ctx.canvas.width/2, ctx.canvas.height/2+50);
+        ctx.fillStyle = COLOR.MERRY_CRANES_BILL;
+        ctx.fillText('Start Now !!!', ctx.canvas.width/2, ctx.canvas.height/2+140);
+        ctx.closePath();
     }
 });
