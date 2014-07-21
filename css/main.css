@@ -6,12 +6,14 @@ body {
 	display: block;
 	margin: 30px auto;
 	border: solid 1px #1cc5a9;
+    box-shadow: 0 0 6px #9fefe3;
 }
 
 h1 {
     text-align: center;
     font-family: Arial;
     min-width: 1024px;
+    text-shadow: 2px 2px 4px #D5D4B1;
 }
 
 #set {
@@ -32,33 +34,36 @@ h1 {
 #set input[type=text]:focus,
 #set input[type=text]:active {
     border: solid 1px #f7636e;
+    box-shadow: 0 0 6px #ebb09d;
     outline: 0;
 }
 
 #set span {
     font-size: 24px;
     font-weight: bold;
+    text-shadow: 1px 1px 2px #D5D4B1;
 }
 
 #set input[type=button] {
     width: 100px;
     height: 38px;
-    background: #1cc5a9;
     color: white;
     text-align: center;
     font-size: 18px;
     cursor: pointer;
-}
-
-#set input[type=button]:active {
     border: 0;
     outline: 0;
-    background: #f7636e;
 }
 
 #set input[type=button]:disabled {
-    border: 0;
-    outline: 0;
     background: #d5d4b1;
     cursor: not-allowed;
+}
+
+#start, #reset:active {
+    background: #1cc5a9;
+}
+
+#reset, #start:active {
+    background: #f7636e;
 }
