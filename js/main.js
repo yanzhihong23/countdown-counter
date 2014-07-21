@@ -24,34 +24,44 @@ require(['jquery', 'digit', 'color'], function($, DIGIT, COLOR) {
             color: COLOR.BEWITCHED_TREE //digit ball color
         };
 
-    $('#start').click(function() {
+    // init
+    (function(){
+        initColors();
+        renderCounter();
+        bindEvent();
+    })();
+
+    function bindEvent() {
+        $('#start').click(function() {
+            balls = [];
+            countdown = getInput();
+
+            if(typeof ticker !== 'undefined') clearInterval(ticker);
+            initTicker();
+        });
+
+        $('#reset').click(function() {
+            $('input[type=text]').val('').trigger('input');
+
+            clearInterval(ticker);
+            countdown = 0;
+            balls = [];
+            ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+            renderCounter();
+        });
+
+        $('input[type=text]').on('input', function() {
+            $('#start').prop('disabled', getInput() ? false : true);
+        });
+    }
+
+    function getInput() {
         var hours = parseInt($('#hours').val())  || 0,
             minutes = parseInt($('#minutes').val())  || 0,
             seconds = parseInt($('#seconds').val())  || 0;
 
-        balls = [];
-        countdown =  hours*3600 + minutes*60 + seconds;
-
-        if(typeof ticker !== 'undefined') clearInterval(ticker);
-        initTicker();
-    });
-
-    $('#reset').click(function() {
-        $('#hours').val('');
-        $('#minutes').val('');
-        $('#seconds').val('');
-
-        clearInterval(ticker);
-        countdown = 0;
-        balls = [];
-        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-        renderCounter();
-    });
-
-
-    // init
-    initColors();
-    renderCounter();
+        return hours*3600 + minutes*60 + seconds;
+    }
 
     function initColors() {
         for(var i in COLOR) {
