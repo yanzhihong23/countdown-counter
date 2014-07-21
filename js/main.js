@@ -9,27 +9,20 @@ require(['jquery', 'digit', 'color'], function($, DIGIT, COLOR) {
     var canvas = document.getElementById('canvas');
     var ctx = canvas.getContext('2d');
 
-    var options = {
-        x: 0,
-        y: 0,
-        digit: 0,
-        radius: 7,
-        space: 1,
-        color: COLOR.BEWITCHED_TREE
-    };
-
     var colors = [],
         balls = [],
         lastCountdown,
         countdown,
         lastSecond,
-        ticker;
-
-    for(var i in COLOR) {
-        if(COLOR.hasOwnProperty(i)) {
-            colors.push(COLOR[i]);
-        }
-    }
+        ticker,
+        options = { // digit options
+            x: 0, // offset left
+            y: 0, // offset top
+            digit: 0, // digit value
+            radius: 7, // digit ball radius
+            space: 1, // space between two balls is 2*space
+            color: COLOR.BEWITCHED_TREE //digit ball color
+        };
 
     $('#start').click(function() {
         var hours = parseInt($('#hours').val())  || 0,
@@ -52,16 +45,26 @@ require(['jquery', 'digit', 'color'], function($, DIGIT, COLOR) {
         countdown = 0;
         balls = [];
         ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-        renderTime();
-//        location.reload(true);
+        renderCounter();
     });
 
-    renderTime();
+
+    // init
+    initColors();
+    renderCounter();
+
+    function initColors() {
+        for(var i in COLOR) {
+            if(COLOR.hasOwnProperty(i)) {
+                colors.push(COLOR[i]);
+            }
+        }
+    }
 
     function initTicker() {
         ticker = setInterval(function() {
             ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-            renderTime();
+            renderCounter();
             updateBalls();
             rendBalls();
             if(!countdown && !balls.length) {
@@ -70,7 +73,7 @@ require(['jquery', 'digit', 'color'], function($, DIGIT, COLOR) {
         }, 50);
     }
 
-    function renderTime() {
+    function renderCounter() {
         if(!countdown) countdown = 0;
 
         var second = (new Date).getSeconds();
@@ -92,33 +95,25 @@ require(['jquery', 'digit', 'color'], function($, DIGIT, COLOR) {
                 x+42*block,
                 x+50*block
         ];
+
+        var digPos = {
+            h1: xArr[0],
+            h2: xArr[1],
+            m1: xArr[3],
+            m2: xArr[4],
+            s1: xArr[6],
+            s2: xArr[7]
+        };
+
         for(var i= 0, len=digArr.length; i<len; i++) {
             renderDigit({x:xArr[i], y:y, digit:digArr[i]});
         }
 
         if(lastCountdown) {
-            if(lastTime.h1 !== time.h1) {
-                addBall({x:xArr[0], y:y, digit:time.h1});
-            }
-
-            if(lastTime.h2 !== time.h2) {
-                addBall({x:xArr[1], y:y, digit:time.h2});
-            }
-
-            if(lastTime.m1 !== time.m1) {
-                addBall({x:xArr[3], y:y, digit:time.m1});
-            }
-
-            if(lastTime.m2 !== time.m2) {
-                addBall({x:xArr[4], y:y, digit:time.m2});
-            }
-
-            if(lastTime.s1 !== time.s1) {
-                addBall({x:xArr[6], y:y, digit:time.s1});
-            }
-
-            if(lastTime.s2 !== time.s2) {
-                addBall({x:xArr[7], y:y, digit:time.s2});
+            for(var a in time) {
+                if(lastTime[a] !== time[a]) {
+                    addBall({x: digPos[a], y: y, digit: time[a]});
+                }
             }
         }
 
